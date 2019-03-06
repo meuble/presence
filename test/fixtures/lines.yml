@@ -1,0 +1,8 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+valid:
+  type: 
+  user_id: 1
+  applies_on: 2019-03-06
+  electricity_metric: MyString
+  water_metric: MyString
