@@ -29,6 +29,21 @@ RSpec.describe User, type: :model do
         expect(@user.save).to be_falsy
         expect(@user.errors).to include(:email)
       end
+
+      it "should be formated as an email" do
+        @user.email = ""
+        expect(@user.save).to be_falsy
+        expect(@user.errors).to include(:email)
+        @user.email = "toto"
+        expect(@user.save).to be_falsy
+        expect(@user.errors).to include(:email)
+        @user.email = "toto@localhost"
+        expect(@user.save).to be_falsy
+        expect(@user.errors).to include(:email)
+        @user.email = "toto@zefzef.fe"
+        expect(@user.save).to be_truthy
+        expect(@user.errors).not_to include(:email)
+      end
     end
     
     describe "name" do
