@@ -44,4 +44,17 @@ RSpec.describe Line, type: :model do
       end
     end
   end
+
+  describe "Relations" do
+    it "should belongs to a user" do
+      @line = build(:line, user_id: nil)
+      expect(@line).to respond_to(:user)
+      expect(@line.user).to be_nil
+      
+      user = create(:user)
+      @line.user_id = user.id
+      @line.save
+      expect(@line.reload.user).to eq(user)
+    end
+  end
 end
