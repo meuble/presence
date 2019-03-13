@@ -54,4 +54,17 @@ RSpec.describe User, type: :model do
       end
     end
   end
+  
+  describe "Relations" do
+    it "should have many lines" do
+      @user = create(:user)
+      expect(@user).to respond_to(:lines)
+      expect(@user.lines).to eq([])
+      
+      line = build(:line)
+      line.user_id = @user.id
+      line.save
+      expect(@user.reload.lines).to eq([line])
+    end
+  end
 end
