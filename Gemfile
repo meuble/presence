@@ -35,6 +35,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'simplecov'
   gem 'faker'
+  gem 'json_spec'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
