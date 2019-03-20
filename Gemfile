@@ -36,6 +36,7 @@ group :development, :test do
   gem 'simplecov'
   gem 'faker'
   gem 'json_spec'
+  gem 'rails-controller-testing'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
