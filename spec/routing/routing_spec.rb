@@ -18,4 +18,15 @@ RSpec.describe Arrival, type: :routing do
       end
     end
   end
+
+  describe "Pages" do
+    describe "Home" do
+      it "should route to pages#home" do
+        expect(get: "/").to route_to(
+          controller: "pages",
+          action: "home"
+        )
+      end
+    end
+  end
 end

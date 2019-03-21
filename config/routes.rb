@@ -3,5 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do 
      resources :lines, only: [:index, :create]
     end 
-  end 
+  end
+  
+  root to: 'pages#home'
 end

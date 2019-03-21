@@ -92,7 +92,6 @@ RSpec.describe Api::V1::LinesController, type: :controller do
       
       it "should render error" do
         post :create
-        p response.body
         expect(JSON.parse(response.body)).to include("errors")
       end
       
