@@ -11,6 +11,11 @@ RSpec.describe User, type: :model do
       expect(User.new).to respond_to(:email)
       expect(User.new.attributes.keys).to include("email")
     end
+
+    it "should have a password digest" do
+      expect(User.new).to respond_to(:password_digest)
+      expect(User.new.attributes.keys).to include("password_digest")
+    end
   end
 
   describe "Validations" do
@@ -51,6 +56,37 @@ RSpec.describe User, type: :model do
         @user.name = nil
         expect(@user.save).to be_falsy
         expect(@user.errors).to include(:name)
+      end
+    end
+
+    describe "password" do
+      it "should be present" do
+        @user.password_digest = nil # force has_secure_password to check for a new password
+        @user.password = nil
+        expect(@user.save).to be_falsy
+        expect(@user.errors).to include(:password)
+      end
+    end
+
+    describe "password_confirmation" do
+      describe "when present" do
+        it "should be identic to password" do
+          @user.password_digest = nil # force has_secure_password to check for a new password
+          @user.password = "toto2"
+          @user.password_confirmation = "toto1"
+          expect(@user.save).to be_falsy
+          expect(@user.errors).to include(:password_confirmation)
+        end
+      end
+      
+      describe "when absent" do
+        it "should not be mandatory" do
+          @user.password_digest = nil # force has_secure_password to check for a new password
+          @user.password = Faker::Alphanumeric.alphanumeric(10)
+          @user.password_confirmation = nil
+          expect(@user.save).to be_truthy
+          expect(@user.errors).not_to include(:password_confirmation)
+        end
       end
     end
   end
