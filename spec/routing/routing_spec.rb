@@ -4,16 +4,18 @@ RSpec.describe Arrival, type: :routing do
   describe "API" do
     describe "v1" do
       it "should route to lines#index" do
-        expect(get: "/api/v1/lines").to route_to(
+        expect(get: "/api/v1/lines.json").to route_to(
           controller: "api/v1/lines",
-          action: "index"
+          action: "index",
+          format: "json"
         )
       end
 
       it "should route to lines#create" do
-        expect(post: "/api/v1/lines").to route_to(
+        expect(post: "/api/v1/lines.json").to route_to(
           controller: "api/v1/lines",
-          action: "create"
+          action: "create",
+          format: "json"
         )
       end
     end
