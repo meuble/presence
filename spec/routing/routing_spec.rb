@@ -18,6 +18,14 @@ RSpec.describe Arrival, type: :routing do
           format: "json"
         )
       end
+
+      it "should route to user_token#create" do
+        expect(post: "/api/v1/user_token.json").to route_to(
+          controller: "api/v1/user_token",
+          action: "create",
+          format: "json"
+        )
+      end
     end
   end
 
