@@ -103,4 +103,52 @@ RSpec.describe User, type: :model do
       expect(@user.reload.lines).to eq([line])
     end
   end
+
+  describe "#auth_token" do
+    before :each do
+      @user = create(:user)
+    end
+    
+    it "should the JWT library to encode it" do
+      jwt_lib = class_double("JWT").as_stubbed_const(:transfer_nested_constants => true)
+      expect(jwt_lib).to receive(:encode)
+      @user.auth_token
+    end
+    
+    it "should embed the user id as payload" do
+      payload = JWT.decode(@user.auth_token, Rails.application.credentials.secret_key_base, true, { algorithm: 'HS256' }).first
+      expect(payload["user_id"]).to eq(@user.id)
+    end
+    
+    it "should add a time stamp as payload" do
+      t = Time.zone.now
+      exp = 1.hour.from_now
+      expect(Time.zone).to receive(:now).and_return(t)
+      payload = JWT.decode(@user.auth_token, Rails.application.credentials.secret_key_base, true, { algorithm: 'HS256' }).first
+      expect(payload["exp"]).to eq(exp.to_i)
+    end
+
+    it "should be a JWT Token" do
+      token = @user.auth_token
+      expect(token.split('.').size).to eq(3)
+    end
+
+    it "should expire after 1 hour" do
+      token = @user.auth_token
+      t = Time.zone.now
+      expect(Time.zone).to receive(:now).and_return(t - 1.hours - 1.second)
+      expect do
+        JWT.decode(@user.auth_token, Rails.application.credentials.secret_key_base, true, { algorithm: 'HS256' })
+      end.to raise_error(JWT::ExpiredSignature)
+    end
+    
+    it "should not expire before 1 hour" do
+      token = @user.auth_token
+      t = Time.zone.now
+      expect(Time.zone).to receive(:now).and_return(t - 30.minutes)
+      expect do
+        JWT.decode(@user.auth_token, Rails.application.credentials.secret_key_base, true, { algorithm: 'HS256' })
+      end.not_to raise_error
+    end
+  end
 end
