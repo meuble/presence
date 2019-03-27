@@ -59,3 +59,10 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
+
+def authenticate(token, controller)
+  @stub_cookie_jar = double()
+  allow(@stub_cookie_jar).to receive(:signed).and_return(HashWithIndifferentAccess.new)
+  @stub_cookie_jar.signed[:jwt] = token
+  allow(controller).to receive(:cookies).and_return(@stub_cookie_jar)
+end

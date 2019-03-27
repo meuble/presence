@@ -1,4 +1,7 @@
 class Api::V1::LinesController < ApplicationController
+  include Authenticable
+  before_action :require_login
+  
   def index
     @lines = Line.all
     render json: @lines.as_json(line_controlled_json_attributes)
@@ -6,7 +9,7 @@ class Api::V1::LinesController < ApplicationController
 
   def create
     permitted_params = line_params
-    @line = User.last.lines.new(permitted_params)
+    @line = current_user.lines.new(permitted_params)
     if @line.save
       render json: @line.as_json(line_controlled_json_attributes), status: :created
     else
