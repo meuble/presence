@@ -109,7 +109,7 @@ RSpec.describe User, type: :model do
       @user = create(:user)
     end
     
-    it "should the JWT library to encode it" do
+    it "should use the JWT library to encode it" do
       jwt_lib = class_double("JWT").as_stubbed_const(:transfer_nested_constants => true)
       expect(jwt_lib).to receive(:encode)
       @user.auth_token
@@ -149,6 +149,39 @@ RSpec.describe User, type: :model do
       expect do
         JWT.decode(@user.auth_token, Rails.application.credentials.secret_key_base, true, { algorithm: 'HS256' })
       end.not_to raise_error
+    end
+  end
+
+  describe "#from_auth_token" do
+    describe "with valid token" do
+      it "should return corresponding user" do
+        user1 = create(:user)
+        user2 = create(:user)
+        expect(User.from_auth_token(user1.auth_token)).to eq(user1)
+        expect(User.from_auth_token(user2.auth_token)).to eq(user2)
+      end
+    end
+    
+    describe "with invalid token" do
+      describe "as malformed" do
+        it "should raise InvalidToken error" do
+          expect do
+            User.from_auth_token("1234")
+          end.to raise_error(JWT::DecodeError)
+        end
+      end
+      
+      describe "as expired" do
+        it "should raise InvalidToken error" do
+          payload = {user_id: create(:user).id, exp: 1.hour.ago.to_i }
+          hmac_secret = Rails.application.credentials.secret_key_base
+          token = JWT.encode payload, hmac_secret, 'HS256'
+          
+          expect do
+            User.from_auth_token(token)
+          end.to raise_error(JWT::ExpiredSignature)
+        end
+      end
     end
   end
 end
